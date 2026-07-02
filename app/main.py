@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 import os
 from app.edge_filter import apply_edge_filter
+from app.alert_engine import generate_alerts, get_all_alerts
 load_dotenv()
 
 from pydantic import BaseModel
@@ -30,4 +31,18 @@ def health_check():
 @app.post("/telemetry")
 def receive_telemetry(reading: TelemetryReading):
     result = apply_edge_filter(reading.model_dump())
-    return result    
+    
+    if result["mode"] == "CRITICAL":
+        alerts = generate_alerts(reading.vehicle_id, result["violations"])
+        result["alerts"] = alerts
+    else:
+        result["alerts"] = []
+    
+    return result
+
+@app.get("/alerts")
+def get_alerts():
+    return {
+        "total": len(get_all_alerts()),
+        "alerts": get_all_alerts()
+    }   
