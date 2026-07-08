@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 from app.edge_filter import apply_edge_filter
 from app.alert_engine import generate_alerts, get_all_alerts
+from app.ml.anomaly import store_reading, detect_anomaly
 load_dotenv()
 
 from pydantic import BaseModel
@@ -38,6 +39,7 @@ def health_check():
 @app.post("/telemetry")
 def receive_telemetry(reading: TelemetryReading):
     result = apply_edge_filter(reading.model_dump())
+    store_reading(reading.model_dump())
     
     if result["mode"] == "CRITICAL":
         alerts = generate_alerts(reading.vehicle_id, result["violations"])
@@ -52,4 +54,7 @@ def get_alerts():
     return {
         "total": len(get_all_alerts()),
         "alerts": get_all_alerts()
-    }   
+    }
+@app.get("/predict/{vehicle_id}")
+def predict_anomaly(vehicle_id: str):
+    return detect_anomaly(vehicle_id)       
