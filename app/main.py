@@ -1,3 +1,5 @@
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi import FastAPI
 from dotenv import load_dotenv
 import os
@@ -21,6 +23,11 @@ app = FastAPI(
     description="Intelligent Edge-Computing Pipeline for IoT Data Minimisation and Predictive Asset Analytics",
     version="1.0.0"
 )
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+@app.get("/")
+def serve_dashboard():
+    return FileResponse("frontend/index.html")
 @app.get("/health")
 def health_check():
     return {

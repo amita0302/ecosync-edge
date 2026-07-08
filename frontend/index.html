@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSync-Edge Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="root">
+
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="brand-wrap">
+                <div class="brand-logo">🌿</div>
+                <div class="brand-text">
+                    <h1>EcoSync-Edge</h1>
+                    <p>IoT Edge-Computing Pipeline</p>
+                </div>
+            </div>
+            <div class="topbar-center">
+                <span class="breadcrumb">Overview / <span>Dashboard</span></span>
+            </div>
+            <div class="topbar-right">
+                <div class="live-indicator">
+                    <div class="live-dot"></div>Live
+                </div>
+                <div class="topbar-time" id="last-updated">--</div>
+                <div class="icon-btn">🔔</div>
+                <div class="icon-btn">⚙️</div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-group">
+                <div class="nav-group-label">Monitor</div>
+                <div class="nav-link active"><span class="nav-link-icon">📊</span><span class="nav-link-text">Dashboard</span></div>
+                <div class="nav-link"><span class="nav-link-icon">🚛</span><span class="nav-link-text">Fleet</span></div>
+                <div class="nav-link"><span class="nav-link-icon">⚠️</span><span class="nav-link-text">Alerts</span><span class="nav-link-badge" id="alert-badge">0</span></div>
+                <div class="nav-link"><span class="nav-link-icon">📈</span><span class="nav-link-text">Analytics</span></div>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Intelligence</div>
+                <div class="nav-link"><span class="nav-link-icon">🤖</span><span class="nav-link-text">AI Insights</span></div>
+                <div class="nav-link"><span class="nav-link-icon">🧠</span><span class="nav-link-text">RAG Pipeline</span></div>
+                <div class="nav-link"><span class="nav-link-icon">🔍</span><span class="nav-link-text">Anomaly Detection</span></div>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">System</div>
+                <div class="nav-link"><span class="nav-link-icon">📄</span><span class="nav-link-text">Reports</span></div>
+                <div class="nav-link"><span class="nav-link-icon">⚙️</span><span class="nav-link-text">Settings</span></div>
+            </div>
+
+            <div class="fleet-panel">
+                <div class="fleet-panel-title">Fleet Status</div>
+                <div class="fleet-item">
+                    <div class="fleet-item-left"><div class="fleet-dot" id="dot-trk1"></div><span class="fleet-name">TRK-001</span></div>
+                    <span class="fleet-chip" id="chip-trk1">--</span>
+                </div>
+                <div class="fleet-item">
+                    <div class="fleet-item-left"><div class="fleet-dot" id="dot-trk2"></div><span class="fleet-name">TRK-002</span></div>
+                    <span class="fleet-chip" id="chip-trk2">--</span>
+                </div>
+                <div class="fleet-item">
+                    <div class="fleet-item-left"><div class="fleet-dot" id="dot-trk3"></div><span class="fleet-name">TRK-003</span></div>
+                    <span class="fleet-chip" id="chip-trk3">--</span>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="sys-status"><div class="sys-dot"></div>All systems operational</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <div class="main-inner">
+
+                <!-- Metric Cards -->
+                <div class="metrics-row">
+                    <div class="mc">
+                        <div class="mc-accent-bar" style="background:#0969da"></div>
+                        <div class="mc-header"><span class="mc-label">Total vehicles</span><span class="mc-icon">🚛</span></div>
+                        <div class="mc-value">3</div>
+                        <div class="mc-sub sub-muted">Active fleet</div>
+                    </div>
+                    <div class="mc">
+                        <div class="mc-accent-bar" style="background:#cf222e"></div>
+                        <div class="mc-header"><span class="mc-label">Critical alerts</span><span class="mc-icon">🔴</span></div>
+                        <div class="mc-value" id="critical-count">0</div>
+                        <div class="mc-sub sub-red" id="critical-sub">Checking...</div>
+                    </div>
+                    <div class="mc">
+                        <div class="mc-accent-bar" style="background:#1a7f37"></div>
+                        <div class="mc-header"><span class="mc-label">Eco mode</span><span class="mc-icon">🟢</span></div>
+                        <div class="mc-value" id="eco-count">0</div>
+                        <div class="mc-sub sub-muted">Normal operation</div>
+                    </div>
+                    <div class="mc">
+                        <div class="mc-accent-bar" style="background:#bf8700"></div>
+                        <div class="mc-header"><span class="mc-label">Total alerts</span><span class="mc-icon">📋</span></div>
+                        <div class="mc-value" id="total-alerts">0</div>
+                        <div class="mc-sub sub-muted">This session</div>
+                    </div>
+                </div>
+
+                <!-- Telemetry + Alert Feed -->
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-head">
+                            <span class="card-title">Live telemetry feed</span>
+                            <span class="card-action">Auto-refreshing 3s</span>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Vehicle</th>
+                                    <th>Speed</th>
+                                    <th>Temp °C</th>
+                                    <th>Oil bar</th>
+                                    <th>Fuel %</th>
+                                    <th>Bat V</th>
+                                    <th>Mode</th>
+                                </tr>
+                            </thead>
+                            <tbody id="telemetry-body">
+                                <tr><td colspan="7">Waiting for data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-head"><span class="card-title">Alert feed</span></div>
+                        <div class="alert-list" id="alert-feed">
+                            <p style="color:#8c959f;font-size:12px">No alerts yet...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mini Charts -->
+                <div class="charts-row">
+                    <div class="mini-chart">
+                        <div class="mc-chart-title">Speed · TRK-001</div>
+                        <div class="mc-chart-val" id="chart-val-1" style="color:#0969da">-- kmh</div>
+                        <div class="bars" id="bars-1"></div>
+                    </div>
+                    <div class="mini-chart">
+                        <div class="mc-chart-title">Engine temp · TRK-002</div>
+                        <div class="mc-chart-val" id="chart-val-2" style="color:#cf222e">-- °C</div>
+                        <div class="bars" id="bars-2"></div>
+                    </div>
+                    <div class="mini-chart">
+                        <div class="mc-chart-title">Oil pressure · TRK-003</div>
+                        <div class="mc-chart-val" id="chart-val-3" style="color:#bf8700">-- bar</div>
+                        <div class="bars" id="bars-3"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
