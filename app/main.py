@@ -6,6 +6,7 @@ import os
 from app.edge_filter import apply_edge_filter
 from app.alert_engine import generate_alerts, get_all_alerts
 from app.ml.anomaly import store_reading, detect_anomaly
+from app.rag.rag_engine import generate_recommendation
 load_dotenv()
 
 from pydantic import BaseModel
@@ -57,4 +58,14 @@ def get_alerts():
     }
 @app.get("/predict/{vehicle_id}")
 def predict_anomaly(vehicle_id: str):
-    return detect_anomaly(vehicle_id)       
+    return detect_anomaly(vehicle_id) 
+
+@app.post("/ai-recommendation")
+def get_ai_recommendation(data: dict):
+    return generate_recommendation(
+        vehicle_id=data.get("vehicle_id"),
+        alert_title=data.get("alert_title"),
+        alert_message=data.get("alert_message"),
+        parameter=data.get("parameter"),
+        value=data.get("value")
+    )      
